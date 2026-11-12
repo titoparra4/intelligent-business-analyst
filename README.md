@@ -7,7 +7,7 @@ requirements, ready for development and QA.**
 ![Format: Agent Skill](https://img.shields.io/badge/format-Agent%20Skill-6f42c1)
 ![Version](https://img.shields.io/badge/version-1.0.0-green)
 
-📘 **User manual (Spanish, PDF):** [docs/Manual-de-usuario.pdf](docs/Manual-de-usuario.pdf)
+📘 **User manual (PDF):** [English](docs/User-manual.pdf) · [Español](docs/Manual-de-usuario.pdf)
 
 ## 1. Project overview
 
