@@ -7,6 +7,8 @@ requirements, ready for development and QA.**
 ![Format: Agent Skill](https://img.shields.io/badge/format-Agent%20Skill-6f42c1)
 ![Version](https://img.shields.io/badge/version-1.0.0-green)
 
+📘 **User manual (Spanish, PDF):** [docs/Manual-de-usuario.pdf](docs/Manual-de-usuario.pdf)
+
 ## 1. Project overview
 
 Intelligent Business Analyst is a portable skill for AI agents that support the `SKILL.md` format
@@ -48,7 +50,7 @@ injection resistant), uses a stable ID scheme across artifacts, and scales outpu
 
 | Platform | Install location / method | Status |
 |---|---|---|
-| Claude Code | `~/.claude/skills/` (personal) or `.claude/skills/` (project) | Designed for; structure follows the documented skill layout |
+| Claude Code | `skills` CLI (`-a claude-code`), or clone into `~/.claude/skills/` (personal) / `.claude/skills/` (project) | Designed for; structure follows the documented skill layout |
 | Claude apps (claude.ai, desktop) | Upload a ZIP where custom skills are enabled for your plan | Designed for; availability depends on plan and settings |
 | OpenAI Codex | User or repository skills directory documented for your Codex version | Format-compatible (`SKILL.md` + `agents/openai.yaml`); **not yet tested end to end** |
 | Other agents (via `skills` CLI) | `npx skills add …` | Depends on the agent's skill support |
@@ -111,7 +113,35 @@ The repository root **is** the skill folder. The installed folder must be named
 > `git rev-parse v1.0.0` with the commit listed on the
 > [release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.0.0).
 
-### Claude Code
+### skills.sh (`skills` CLI) — recommended
+
+Install with the third-party [`skills` CLI](https://github.com/vercel-labs/skills), which fetches the
+skill from GitHub and installs it for the agent you choose (requires a recent Node.js):
+
+```bash
+# 1. Preview the skills in this repository (optional)
+npx skills add titoparra4/intelligent-business-analyst --list
+
+# 2. Install globally (-g) for your agent (-a)
+npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a claude-code
+npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a codex
+```
+
+Then ask your agent *"What skills are available?"* to confirm `intelligent-business-analyst` is listed.
+
+The CLI is not maintained by this project; review what it installs. It sends anonymous install
+telemetry (set `DISABLE_TELEMETRY=1` to opt out).
+
+### Alternative: manual installation from the repository
+
+Use this if you prefer not to use the `skills` CLI (no Node.js, no telemetry), want a
+project-scoped install shared with your team, need a ZIP for the Claude apps, or want to verify the
+release yourself.
+
+<details>
+<summary>Show manual installation instructions (git clone, ZIP, Codex)</summary>
+
+#### Claude Code
 
 ```bash
 # personal (all projects)
@@ -125,7 +155,7 @@ git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-bu
 
 Ask *"What skills are available?"* to confirm it is discovered.
 
-### Claude apps (claude.ai / desktop)
+#### Claude apps (claude.ai / desktop)
 
 Where custom skills are enabled for your plan, upload a ZIP whose top-level folder is
 `intelligent-business-analyst/` (Settings → Capabilities/Skills at the time of writing; check the
@@ -137,25 +167,13 @@ cd intelligent-business-analyst
 git archive --format=zip --prefix=intelligent-business-analyst/ -o ../intelligent-business-analyst.zip v1.0.0
 ```
 
-### OpenAI Codex
+#### OpenAI Codex
 
 Codex reads skills in the same `SKILL.md` format. Clone or copy the folder into the skills directory
 documented for your Codex version (user-level or repository-level). `agents/openai.yaml` supplies
 optional display metadata. Check the current Codex documentation for the exact path.
 
-### skills.sh (`skills` CLI)
-
-The third-party [`skills` CLI](https://github.com/vercel-labs/skills) installs skills from GitHub
-repositories for several agents (requires a recent Node.js):
-
-```bash
-npx skills add titoparra4/intelligent-business-analyst --list          # preview
-npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a claude-code
-npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a codex
-```
-
-The CLI is not maintained by this project; review what it installs. It sends anonymous install
-telemetry (set `DISABLE_TELEMETRY=1` to opt out).
+</details>
 
 ### Assistants without skill support
 
