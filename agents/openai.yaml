@@ -1,0 +1,6 @@
+# Optional UI metadata for OpenAI Codex skill listings. The skill itself is defined by SKILL.md;
+# environments that do not read this file ignore it.
+interface:
+  display_name: "Intelligent Business Analyst"
+  short_description: "Traceable requirements, user stories, business rules, process models and quality reviews"
+  default_prompt: "Analyze this business need: extract requirements, business rules and open questions, then propose epics and user stories with acceptance criteria."
