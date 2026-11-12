@@ -104,15 +104,22 @@ flowchart LR
 The repository root **is** the skill folder. The installed folder must be named
 `intelligent-business-analyst` (the skill `name`).
 
+> **Supply-chain note.** The commands below are pinned to the release tag `v1.0.0`
+> rather than the moving default branch. Before installing, review the files you are about to
+> load (`SKILL.md`, `references/`, `templates/`): the skill is plain Markdown, has no runtime
+> dependencies and fetches nothing at run time. To verify a clone, compare
+> `git rev-parse v1.0.0` with the commit listed on the
+> [release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.0.0).
+
 ### Claude Code
 
 ```bash
 # personal (all projects)
-git clone --depth 1 https://github.com/titoparra4/intelligent-business-analyst.git \
+git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git \
   ~/.claude/skills/intelligent-business-analyst
 
 # project-scoped (shared with your team through the repository)
-git clone --depth 1 https://github.com/titoparra4/intelligent-business-analyst.git \
+git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git \
   .claude/skills/intelligent-business-analyst
 ```
 
@@ -125,9 +132,9 @@ Where custom skills are enabled for your plan, upload a ZIP whose top-level fold
 current Claude documentation):
 
 ```bash
-git clone --depth 1 https://github.com/titoparra4/intelligent-business-analyst.git
+git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git
 cd intelligent-business-analyst
-git archive --format=zip --prefix=intelligent-business-analyst/ -o ../intelligent-business-analyst.zip HEAD
+git archive --format=zip --prefix=intelligent-business-analyst/ -o ../intelligent-business-analyst.zip v1.0.0
 ```
 
 ### OpenAI Codex
@@ -143,8 +150,8 @@ repositories for several agents (requires a recent Node.js):
 
 ```bash
 npx skills add titoparra4/intelligent-business-analyst --list          # preview
-npx skills add titoparra4/intelligent-business-analyst -g -a claude-code
-npx skills add titoparra4/intelligent-business-analyst -g -a codex
+npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a claude-code
+npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a codex
 ```
 
 The CLI is not maintained by this project; review what it installs. It sends anonymous install
