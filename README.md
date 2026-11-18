@@ -107,11 +107,21 @@ The repository root **is** the skill folder. The installed folder must be named
 `intelligent-business-analyst` (the skill `name`).
 
 > **Supply-chain note.** The commands below are pinned to the release tag `v1.0.0`
-> rather than the moving default branch. Before installing, review the files you are about to
-> load (`SKILL.md`, `references/`, `templates/`): the skill is plain Markdown, has no runtime
-> dependencies and fetches nothing at run time. To verify a clone, compare
-> `git rev-parse v1.0.0` with the commit listed on the
-> [release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.0.0).
+> rather than the moving default branch, and every URL in this README is used **only at install
+> time, by you**. The installed skill contains no URLs that the agent fetches or follows: it is
+> plain Markdown, has no runtime dependencies, no scripts the agent runs and no network access.
+> Before installing, review the files you are about to load (`SKILL.md`, `references/`,
+> `templates/`).
+>
+> **Verify the release.** Tag `v1.0.0` must resolve to commit
+> `4fc56c69655af040e89745342b484b041847d9ae`. After cloning, check it before use:
+>
+> ```bash
+> test "$(git -C intelligent-business-analyst rev-parse 'HEAD^{commit}')" = \
+>   4fc56c69655af040e89745342b484b041847d9ae && echo "OK: v1.0.0 verified"
+> ```
+>
+> Adjust the path to wherever you cloned. If the hashes differ, do not install.
 
 ### skills.sh (`skills` CLI) — recommended
 
@@ -120,7 +130,7 @@ skill from GitHub and installs it for the agent you choose (requires a recent No
 
 ```bash
 # 1. Preview the skills in this repository (optional)
-npx skills add titoparra4/intelligent-business-analyst --list
+npx skills add titoparra4/intelligent-business-analyst@v1.0.0 --list
 
 # 2. Install globally (-g) for your agent (-a)
 npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a claude-code
