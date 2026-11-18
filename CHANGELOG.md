@@ -6,6 +6,19 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **Repository layout:** the installable skill moved from the repository root to
+  `skills/intelligent-business-analyst/` (`SKILL.md`, `references/`, `templates/`, `agents/`, plus a
+  copy of `LICENSE`). README, docs, examples and tests stay at the root and are no longer part of the
+  installed skill. Motivation: skill scanners analyse the skill folder, and Snyk flagged the README's
+  install instructions (W012, "unverifiable external dependency").
+- **Breaking for manual installs:** cloning the repository directly into `~/.claude/skills/` no
+  longer works; clone elsewhere and copy `skills/intelligent-business-analyst/` (see README §5).
+  `npx skills add titoparra4/intelligent-business-analyst` keeps working.
+- `tests/validate_repo.py` validates the new layout and fails if the skill folder contains a README,
+  install commands or download URLs.
+
 ### Security
 
 - README hardening related to Snyk W012 ("unverifiable external dependency"): pinned every install

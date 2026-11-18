@@ -8,6 +8,10 @@ Thanks for helping improve the skill. Priorities, in order:
 - **No fabricated content.** Examples must not present invented business rules, regulations or metrics
   as facts; unknown values are `TBD` with an open question.
 - **Synthetic data only.** No real company, customer or personal data in examples or tests.
+- **Skill folder layout.** Everything the agent loads lives in `skills/intelligent-business-analyst/`
+  (`SKILL.md`, `references/`, `templates/`, `agents/`). Repository material (README, docs, examples,
+  tests) stays outside it. Never add a README, install commands (`git clone`, `npx skills add`,
+  `pip install`) or download URLs inside the skill folder; the validator rejects them.
 - **Progressive disclosure.** Keep `SKILL.md` short (the validator enforces < 500 lines). Specialized
   guidance goes in `references/`; reusable document skeletons go in `templates/`.
 - **Stable ID scheme.** If you add an artifact type, add its prefix to the ID scheme in `SKILL.md`.
@@ -16,7 +20,7 @@ Thanks for helping improve the skill. Priorities, in order:
 
 ## Making a change
 
-1. Edit the relevant reference/template. If behaviour changes, update or add a test case in
+1. Edit the relevant reference/template under `skills/intelligent-business-analyst/`. If behaviour changes, update or add a test case in
    `tests/test-cases.md` (Input, Expected behaviour, Expected artifacts, Acceptance criteria, Failure
    conditions) and, where useful, a reference output in `tests/expected-outputs/`.
 2. If you change the scoring rubric, bump its version and re-check the worked example and the TC-10

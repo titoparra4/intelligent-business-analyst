@@ -50,9 +50,9 @@ injection resistant), uses a stable ID scheme across artifacts, and scales outpu
 
 | Platform | Install location / method | Status |
 |---|---|---|
-| Claude Code | `skills` CLI (`-a claude-code`), or clone into `~/.claude/skills/` (personal) / `.claude/skills/` (project) | Designed for; structure follows the documented skill layout |
+| Claude Code | `skills` CLI (`-a claude-code`), or copy `skills/intelligent-business-analyst/` into `~/.claude/skills/` (personal) / `.claude/skills/` (project) | Designed for; structure follows the documented skill layout |
 | Claude apps (claude.ai, desktop) | Upload a ZIP where custom skills are enabled for your plan | Designed for; availability depends on plan and settings |
-| OpenAI Codex | User or repository skills directory documented for your Codex version | Format-compatible (`SKILL.md` + `agents/openai.yaml`); **not yet tested end to end** |
+| OpenAI Codex | Copy `skills/intelligent-business-analyst/` into the skills directory documented for your Codex version | Format-compatible (`SKILL.md` + `agents/openai.yaml`); **not yet tested end to end** |
 | Other agents (via `skills` CLI) | `npx skills add …` | Depends on the agent's skill support |
 | Assistants without skill support | Paste `SKILL.md` as instructions, attach `references/` as knowledge | Works as plain instructions; no automatic module loading |
 
@@ -81,10 +81,14 @@ requested.
 
 ```text
 intelligent-business-analyst/
-├── SKILL.md                 # entry point (frontmatter + core instructions)
-├── agents/openai.yaml       # optional Codex display metadata
-├── references/              # one file per module + scoring rubric
-├── templates/               # BRD, FRD/SRS, stories, rules, gap, impact, use case, RTM
+├── skills/
+│   └── intelligent-business-analyst/   # ← the installable skill (only this folder is installed)
+│       ├── SKILL.md                    # entry point (frontmatter + core instructions)
+│       ├── agents/openai.yaml          # optional Codex display metadata
+│       ├── references/                 # one file per module + scoring rubric
+│       ├── templates/                  # BRD, FRD/SRS, stories, rules, gap, impact, use case, RTM
+│       └── LICENSE
+├── docs/                    # user manuals (PDF)
 ├── examples/                # ecommerce (ES), insurance-api, ai-product
 └── tests/                   # behavioural test cases, evaluation rubric, reference outputs, validator
 ```
@@ -103,7 +107,8 @@ flowchart LR
 
 ## 5. Installation
 
-The repository root **is** the skill folder. The installed folder must be named
+The installable skill is the folder [`skills/intelligent-business-analyst/`](skills/intelligent-business-analyst/); the rest of the repository
+(this README, docs, examples, tests) is not installed. The installed folder must be named
 `intelligent-business-analyst` (the skill `name`).
 
 > **Supply-chain note.** The commands below are pinned to the release tag `v1.0.0`
@@ -114,14 +119,13 @@ The repository root **is** the skill folder. The installed folder must be named
 > `templates/`).
 >
 > **Verify the release.** Tag `v1.0.0` must resolve to commit
-> `4fc56c69655af040e89745342b484b041847d9ae`. After cloning, check it before use:
+> `4fc56c69655af040e89745342b484b041847d9ae`. When installing manually, check the clone before
+> copying the skill (the manual steps below include this check). If the hashes differ, do not
+> install.
 >
-> ```bash
-> test "$(git -C intelligent-business-analyst rev-parse 'HEAD^{commit}')" = \
->   4fc56c69655af040e89745342b484b041847d9ae && echo "OK: v1.0.0 verified"
-> ```
->
-> Adjust the path to wherever you cloned. If the hashes differ, do not install.
+> **Layout change.** Releases after `v1.0.0` keep the skill in `skills/intelligent-business-analyst/`
+> instead of the repository root. `v1.0.0` itself still has the skill at the root, so the manual
+> steps below copy whichever folder holds `SKILL.md`.
 
 ### skills.sh (`skills` CLI) — recommended
 
@@ -154,13 +158,17 @@ release yourself.
 #### Claude Code
 
 ```bash
-# personal (all projects)
-git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git \
-  ~/.claude/skills/intelligent-business-analyst
+# 1. Clone the release into a temporary folder and verify it
+TMP="$(mktemp -d)"
+git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git "$TMP/iba"
+git -C "$TMP/iba" rev-parse 'HEAD^{commit}'   # must print the commit given above
 
-# project-scoped (shared with your team through the repository)
-git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git \
-  .claude/skills/intelligent-business-analyst
+# 2. Copy only the skill folder
+SRC="$TMP/iba/skills/intelligent-business-analyst"; [ -d "$SRC" ] || SRC="$TMP/iba"   # v1.0.0: root
+mkdir -p ~/.claude/skills                                       # personal (all projects)
+rsync -a --exclude .git "$SRC/" ~/.claude/skills/intelligent-business-analyst/
+# project-scoped instead (shared with your team through the repository):
+# mkdir -p .claude/skills && rsync -a --exclude .git "$SRC/" .claude/skills/intelligent-business-analyst/
 ```
 
 Ask *"What skills are available?"* to confirm it is discovered.
@@ -169,32 +177,32 @@ Ask *"What skills are available?"* to confirm it is discovered.
 
 Where custom skills are enabled for your plan, upload a ZIP whose top-level folder is
 `intelligent-business-analyst/` (Settings → Capabilities/Skills at the time of writing; check the
-current Claude documentation):
+current Claude documentation). From a clone of a release that uses the `skills/` layout:
 
 ```bash
-git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git
-cd intelligent-business-analyst
-git archive --format=zip --prefix=intelligent-business-analyst/ -o ../intelligent-business-analyst.zip v1.0.0
+cd skills && zip -r ../intelligent-business-analyst.zip intelligent-business-analyst
 ```
 
 #### OpenAI Codex
 
-Codex reads skills in the same `SKILL.md` format. Clone or copy the folder into the skills directory
-documented for your Codex version (user-level or repository-level). `agents/openai.yaml` supplies
-optional display metadata. Check the current Codex documentation for the exact path.
+Codex reads skills in the same `SKILL.md` format. Copy `skills/intelligent-business-analyst/` into
+the skills directory documented for your Codex version (user-level or repository-level).
+`agents/openai.yaml` supplies optional display metadata. Check the current Codex documentation for
+the exact path.
 
 </details>
 
 ### Assistants without skill support
 
-Use `SKILL.md` (without the frontmatter) as the system/project instructions and attach the
-`references/` and `templates/` files as knowledge. Module loading then depends on the assistant's
+Use [`SKILL.md`](skills/intelligent-business-analyst/SKILL.md) (without the frontmatter) as the system/project instructions and
+attach the files in [`references/`](skills/intelligent-business-analyst/references/) and [`templates/`](skills/intelligent-business-analyst/templates/) as
+knowledge. Module loading then depends on the assistant's
 retrieval; quality may vary.
 
 ### Verify
 
 ```bash
-python3 tests/validate_repo.py   # structure, frontmatter, links, references, test cases, sensitive data
+python3 tests/validate_repo.py   # structure, frontmatter, links, references, skill folder, test cases, sensitive data
 ```
 
 ## 6. Quick start
@@ -281,7 +289,7 @@ The **Requirement Quality Score (RQS)** rates requirements on seven dimensions �
 Consistency, Testability, Traceability, Feasibility, Atomicity — each item scored 0–4 against anchored
 criteria, weighted (configurable), with caps for Critical findings and contradictions, and bands
 (Ready ≥85, Minor rework 70–84, Significant rework 50–69, Not ready <50). The computation is always
-shown. See [references/quality-scoring-rubric.md](references/quality-scoring-rubric.md).
+shown. See [references/quality-scoring-rubric.md](skills/intelligent-business-analyst/references/quality-scoring-rubric.md).
 
 > The RQS is a heuristic to prioritize rework. It is **not** a certification of quality.
 

@@ -2,13 +2,15 @@
 """Structural validation for the intelligent-business-analyst skill.
 
 Standard library only (Python 3.9+). Checks:
-  1. Required files exist.
+  1. Required files exist (skill files under skills/intelligent-business-analyst/).
   2. SKILL.md frontmatter is present and valid for Agent Skills conventions.
   3. Every relative Markdown link resolves.
   4. Every reference file is linked from SKILL.md (progressive disclosure is wired).
   5. SKILL.md stays concise.
   6. Test cases contain the required sections.
   7. No obvious secrets or real-looking personal data.
+  8. The skill folder carries no install/download instructions (keeps README-style setup paths
+     out of what skill scanners and agents load; see Snyk W012).
 
 It does NOT evaluate the skill's behaviour with a model; see tests/test-cases.md for that.
 
@@ -21,10 +23,12 @@ import sys
 from pathlib import Path
 
 ROOT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path(__file__).resolve().parent.parent
+SKILL_NAME = "intelligent-business-analyst"
+SKILL_REL = f"skills/{SKILL_NAME}"
+SKILL_DIR = ROOT / SKILL_REL
 
-REQUIRED = [
-    "SKILL.md", "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", ".gitignore",
-    "agents/openai.yaml",
+SKILL_FILES = [
+    "SKILL.md", "LICENSE", "agents/openai.yaml",
     "references/requirement-engineering.md", "references/user-story-generator.md",
     "references/business-process-modeling.md", "references/business-rules-analyzer.md",
     "references/gap-analysis.md", "references/impact-analysis.md",
@@ -34,6 +38,9 @@ REQUIRED = [
     "templates/business-rules-template.md", "templates/gap-analysis-template.md",
     "templates/impact-analysis-template.md", "templates/use-case-template.md",
     "templates/traceability-matrix-template.md",
+]
+REQUIRED = [f"{SKILL_REL}/{f}" for f in SKILL_FILES] + [
+    "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", ".gitignore",
     "examples/ecommerce/README.md", "examples/insurance-api/README.md", "examples/ai-product/README.md",
     "tests/test-cases.md", "tests/evaluation-rubric.md", "tests/expected-outputs/README.md",
 ]
@@ -50,6 +57,9 @@ SECRET_PATTERNS = {
     "OpenAI/Anthropic-style key": re.compile(r"sk-(ant-)?[A-Za-z0-9_-]{20,}"),
     "Slack token": re.compile(r"xox[abprs]-[A-Za-z0-9-]{10,}"),
 }
+INSTALL_RE = re.compile(r"git clone|npx skills|pip install|curl |wget |https?://github\.com/[^\s)]+\.git", re.I)
+# Only the frontmatter metadata.repository URL is allowed in the skill folder.
+INSTALL_ALLOW = re.compile(r"^\s*repository:")
 TEST_SECTIONS = ["**Input**", "**Expected behaviour:**", "**Expected artifacts:**",
                  "**Acceptance criteria:**", "**Failure conditions:**"]
 
@@ -81,7 +91,7 @@ def parse_frontmatter(text: str) -> dict[str, str]:
 
 
 def check_frontmatter() -> None:
-    path = ROOT / "SKILL.md"
+    path = SKILL_DIR / "SKILL.md"
     if not path.is_file():
         return
     text = path.read_text(encoding="utf-8")
@@ -93,8 +103,8 @@ def check_frontmatter() -> None:
     name, desc = fm.get("name", ""), fm.get("description", "")
     if not re.fullmatch(r"[a-z0-9]+(-[a-z0-9]+)*", name) or len(name) > 64:
         errors.append(f"frontmatter name invalid: {name!r}")
-    if name != "intelligent-business-analyst":
-        errors.append("frontmatter name must be 'intelligent-business-analyst'")
+    if name != SKILL_NAME:
+        errors.append(f"frontmatter name must be {SKILL_NAME!r} (it must match the skill folder)")
     if not desc:
         errors.append("frontmatter description missing")
     elif len(desc) > 1024:
@@ -123,13 +133,30 @@ def check_links() -> None:
 
 
 def check_progressive_disclosure() -> None:
-    skill = (ROOT / "SKILL.md")
+    skill = SKILL_DIR / "SKILL.md"
     if not skill.is_file():
         return
     text = skill.read_text(encoding="utf-8")
-    for ref in sorted((ROOT / "references").glob("*.md")):
+    for ref in sorted((SKILL_DIR / "references").glob("*.md")):
         if f"references/{ref.name}" not in text and f"references/{ref.stem})" not in text:
             errors.append(f"reference not linked from SKILL.md: references/{ref.name}")
+
+
+def check_skill_folder() -> None:
+    if not SKILL_DIR.is_dir():
+        errors.append(f"skill folder missing: {SKILL_REL}/")
+        return
+    stray = [n for n in ("SKILL.md", "references", "templates", "agents") if (ROOT / n).exists()]
+    if stray:
+        errors.append(f"skill files must live in {SKILL_REL}/, found at repo root: {stray}")
+    for f in sorted(SKILL_DIR.rglob("*")):
+        if not f.is_file():
+            continue
+        if f.name.lower().startswith("readme"):
+            errors.append(f"README inside the skill folder: {f.relative_to(ROOT)}")
+        for n, line in enumerate(f.read_text(encoding="utf-8", errors="ignore").splitlines(), 1):
+            if INSTALL_RE.search(line) and not INSTALL_ALLOW.search(line):
+                errors.append(f"install/download instruction in skill folder: {f.relative_to(ROOT)}:{n}")
 
 
 def check_test_cases() -> None:
@@ -164,6 +191,7 @@ def main() -> int:
     check_frontmatter()
     check_links()
     check_progressive_disclosure()
+    check_skill_folder()
     check_test_cases()
     check_sensitive_data()
     for w in warnings:
@@ -173,7 +201,7 @@ def main() -> int:
     if errors:
         print(f"\n{len(errors)} error(s).")
         return 1
-    print("OK  structure, frontmatter, links, references, test cases and sensitive-data checks passed.")
+    print("OK  structure, frontmatter, links, references, skill folder, test cases and sensitive-data checks passed.")
     return 0
 
 
