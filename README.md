@@ -5,7 +5,7 @@ requirements, ready for development and QA.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 ![Format: Agent Skill](https://img.shields.io/badge/format-Agent%20Skill-6f42c1)
-![Version](https://img.shields.io/badge/version-1.0.0-green)
+![Version](https://img.shields.io/badge/version-1.1.0-green)
 
 📘 **User manual (PDF):** [English](docs/User-manual.pdf) · [Español](docs/Manual-de-usuario.pdf)
 
@@ -111,21 +111,21 @@ The installable skill is the folder [`skills/intelligent-business-analyst/`](ski
 (this README, docs, examples, tests) is not installed. The installed folder must be named
 `intelligent-business-analyst` (the skill `name`).
 
-> **Supply-chain note.** The commands below are pinned to the release tag `v1.0.0`
+> **Supply-chain note.** The commands below are pinned to the release tag `v1.1.0`
 > rather than the moving default branch, and every URL in this README is used **only at install
 > time, by you**. The installed skill contains no URLs that the agent fetches or follows: it is
 > plain Markdown, has no runtime dependencies, no scripts the agent runs and no network access.
 > Before installing, review the files you are about to load (`SKILL.md`, `references/`,
 > `templates/`).
 >
-> **Verify the release.** Tag `v1.0.0` must resolve to commit
-> `4fc56c69655af040e89745342b484b041847d9ae`. When installing manually, check the clone before
-> copying the skill (the manual steps below include this check). If the hashes differ, do not
-> install.
+> **Verify the release.** Tag `v1.1.0` must resolve to the commit listed on the
+> [v1.1.0 release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.1.0).
+> When installing manually, check the clone before copying the skill (the manual steps below include
+> this check). If the hashes differ, do not install.
 >
-> **Layout change.** Releases after `v1.0.0` keep the skill in `skills/intelligent-business-analyst/`
-> instead of the repository root. `v1.0.0` itself still has the skill at the root, so the manual
-> steps below copy whichever folder holds `SKILL.md`.
+> **Layout change in v1.1.0.** The skill moved from the repository root to
+> `skills/intelligent-business-analyst/`. If you installed `v1.0.0` by cloning the repository straight
+> into your skills folder, remove that folder and reinstall with one of the methods below.
 
 ### skills.sh (`skills` CLI) — recommended
 
@@ -134,11 +134,11 @@ skill from GitHub and installs it for the agent you choose (requires a recent No
 
 ```bash
 # 1. Preview the skills in this repository (optional)
-npx skills add titoparra4/intelligent-business-analyst@v1.0.0 --list
+npx skills add titoparra4/intelligent-business-analyst@v1.1.0 --list
 
 # 2. Install globally (-g) for your agent (-a)
-npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a claude-code
-npx skills add titoparra4/intelligent-business-analyst@v1.0.0 -g -a codex
+npx skills add titoparra4/intelligent-business-analyst@v1.1.0 -g -a claude-code
+npx skills add titoparra4/intelligent-business-analyst@v1.1.0 -g -a codex
 ```
 
 Then ask your agent *"What skills are available?"* to confirm `intelligent-business-analyst` is listed.
@@ -160,15 +160,14 @@ release yourself.
 ```bash
 # 1. Clone the release into a temporary folder and verify it
 TMP="$(mktemp -d)"
-git clone --depth 1 --branch v1.0.0 https://github.com/titoparra4/intelligent-business-analyst.git "$TMP/iba"
-git -C "$TMP/iba" rev-parse 'HEAD^{commit}'   # must print the commit given above
+git clone --depth 1 --branch v1.1.0 https://github.com/titoparra4/intelligent-business-analyst.git "$TMP/iba"
+git -C "$TMP/iba" rev-parse 'HEAD^{commit}'   # must match the commit on the release page
 
 # 2. Copy only the skill folder
-SRC="$TMP/iba/skills/intelligent-business-analyst"; [ -d "$SRC" ] || SRC="$TMP/iba"   # v1.0.0: root
 mkdir -p ~/.claude/skills                                       # personal (all projects)
-rsync -a --exclude .git "$SRC/" ~/.claude/skills/intelligent-business-analyst/
+cp -R "$TMP/iba/skills/intelligent-business-analyst" ~/.claude/skills/
 # project-scoped instead (shared with your team through the repository):
-# mkdir -p .claude/skills && rsync -a --exclude .git "$SRC/" .claude/skills/intelligent-business-analyst/
+# mkdir -p .claude/skills && cp -R "$TMP/iba/skills/intelligent-business-analyst" .claude/skills/
 ```
 
 Ask *"What skills are available?"* to confirm it is discovered.
@@ -177,10 +176,10 @@ Ask *"What skills are available?"* to confirm it is discovered.
 
 Where custom skills are enabled for your plan, upload a ZIP whose top-level folder is
 `intelligent-business-analyst/` (Settings → Capabilities/Skills at the time of writing; check the
-current Claude documentation). From a clone of a release that uses the `skills/` layout:
+current Claude documentation). From the clone above:
 
 ```bash
-cd skills && zip -r ../intelligent-business-analyst.zip intelligent-business-analyst
+cd "$TMP/iba/skills" && zip -r ~/intelligent-business-analyst.zip intelligent-business-analyst
 ```
 
 #### OpenAI Codex

@@ -3,7 +3,7 @@ name: intelligent-business-analyst
 description: Senior business analysis assistant. Turns business needs, documents, conversations, processes and product ideas into structured, verifiable, traceable requirements - business, functional and non-functional requirements, stakeholders, business rules and decision tables, AS-IS/TO-BE process models (Mermaid, BPMN 2.0), gap and change-impact analysis, epics and user stories with Given/When/Then acceptance criteria, BRD/FRD/SRS/use-case documents, traceability matrices and requirement quality reviews with a 0-100 heuristic score. Use when the user asks to analyze requirements, write user stories or acceptance criteria, model a business process, extract business rules, do gap or impact analysis, review requirement quality or prepare a development/QA handoff, in English or Spanish (requisitos, historias de usuario, criterios de aceptación, reglas de negocio, análisis de brechas, análisis de impacto, BRD). Not for writing application code, legal or regulatory advice, or financial forecasting.
 license: MIT
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   repository: https://github.com/titoparra4/intelligent-business-analyst
 ---
 

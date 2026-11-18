@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-18
+
 ### Changed
 
 - **Repository layout:** the installable skill moved from the repository root to
@@ -18,12 +20,14 @@ All notable changes to this project are documented here. The format follows
   `npx skills add titoparra4/intelligent-business-analyst` keeps working.
 - `tests/validate_repo.py` validates the new layout and fails if the skill folder contains a README,
   install commands or download URLs.
+- User manuals (`docs/User-manual.pdf`, `docs/Manual-de-usuario.pdf`): cover version and the
+  installation chapter updated for v1.1.0 and the new layout.
 
 ### Security
 
 - README hardening related to Snyk W012 ("unverifiable external dependency"): pinned every install
-  command (including `--list`) to `v1.0.0`, documented the release commit hash and a verification
-  command, and clarified that README URLs are install-time only.
+  command (including `--list`) to the release tag, documented how to verify the release commit, and
+  clarified that README URLs are install-time only.
 
 ## [1.0.0] - 2026-11-12
 
