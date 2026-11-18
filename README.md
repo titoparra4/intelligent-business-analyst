@@ -118,8 +118,9 @@ The installable skill is the folder [`skills/intelligent-business-analyst/`](ski
 > Before installing, review the files you are about to load (`SKILL.md`, `references/`,
 > `templates/`).
 >
-> **Verify the release.** Tag `v1.1.0` must resolve to the commit listed on the
-> [v1.1.0 release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.1.0).
+> **Verify the release.** Tag `v1.1.0` must resolve to commit
+> `ee9971013f613e737b4bd52601e93cf11dd95600` (also listed on the
+> [v1.1.0 release page](https://github.com/titoparra4/intelligent-business-analyst/releases/tag/v1.1.0)).
 > When installing manually, check the clone before copying the skill (the manual steps below include
 > this check). If the hashes differ, do not install.
 >
