@@ -8,11 +8,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Security
 
-- Address Snyk W012 ("unverifiable external dependency / runtime URL that controls agent"):
-  removed the repository URL from the `SKILL.md` frontmatter so the agent-loaded file contains no
-  external URL; pinned every README install command (including `--list`) to `v1.0.0`; documented
-  the release commit hash and a verification command; clarified that README URLs are install-time
-  only.
+- README hardening related to Snyk W012 ("unverifiable external dependency"): pinned every install
+  command (including `--list`) to `v1.0.0`, documented the release commit hash and a verification
+  command, and clarified that README URLs are install-time only.
 
 ## [1.0.0] - 2026-11-12
 

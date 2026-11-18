@@ -4,6 +4,7 @@ description: Senior business analysis assistant. Turns business needs, documents
 license: MIT
 metadata:
   version: "1.0.0"
+  repository: https://github.com/titoparra4/intelligent-business-analyst
 ---
 
 # Intelligent Business Analyst
